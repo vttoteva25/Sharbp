@@ -1,0 +1,182 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Sharbp.Services
+@using Microsoft.AspNetCore.Components
+@using Sharbp.HelpingTools 
+
+<div>
+	@if (DisplayAlert)
+	{
+		<div class="@(string.Join(' ', AlertClass))" role="alert">
+			@AlertMessage
+		</div>
+	}
+	<div class="jumbotron bg-white">
+		<div class="row">
+			<h1 style="color: #006A7A; font-family: Bahnschrift; text-indent: 20px">@GivenPost.Title</h1>
+		</div>
+		<div class="row">
+			<h5 style="text-indent: 20px" class="normal-heading">Качено от <a class="user" href="/user/profile/@PostedBy.Username">@PostedBy.Username</a></h5>
+		</div>
+		<div class="row" style="margin-top: 10px;">
+			<div class="col-12">
+				<div class="form-group row">
+					<div class="col-8">
+						<img src="@GivenPost.ImageUrl" class="card-img-top img-fluid" style="height: 400px;">
+					</div>
+					<div class="col-1">
+					</div>
+					<div class="col-3">
+						<h3 class="normal-heading">Последни</h3>
+						<hr style="border-top: 3px solid; color: #006A7A; ">
+						<ul class="recent">
+							@foreach (Models.Post post in RecentPosts)
+							{
+								@if (post.Title.Length < 30)
+								{
+									<li class="menu-item normal-heading"><a class="recent-link" href="post/@post.Id">@post.Title</a></li>
+								}
+								else
+								{
+									<li class="menu-item normal-heading"><a class="recent-link" href="post/@post.Id">@post.Title.Substring(0, 40)...</a></li>
+								}
+							}
+						</ul>
+					</div>
+				</div>
+				<div class="form-group-row py-2">
+					<h4>
+						<button @onclick="(e => Like())" @onclick:preventDefault class="heart">
+							<svg xmlns="http://www.w3.org/2000/svg" @onclick="(e => Like())" @onclick:preventDefault width="32" height="32" fill="@Color" class="bi bi-heart-fill" viewBox="0 0 16 16">
+								<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+							</svg>
+						</button>
+						<span class="normal-heading">@(GivenPost.KudosBy is null ? "0" : GivenPost.KudosBy.Count())</span>
+					</h4>
+				</div>
+				<div class="form-group-row">
+					<div class="col-12">
+						<p style="color: #006A7A; font-family: Bahnschrift; font-size: 18pt;">@GivenPost.Content</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code{
+	[Parameter]
+	public string PostId { get; set; }
+
+	[Parameter]
+	public Models.User PostedBy { get; set; }
+
+	public Models.Post GivenPost { get; set; }
+	public List<Models.Post> RecentPosts { get; set; } = new List<Models.Post>();
+
+	public string Color { get; set; }
+
+	public string AlertMessage { get; set; }
+	public bool DisplayAlert { get; set; }
+	public List<string> AlertClass { get; set; } = new List<string>() { "alert", "alert-info" };
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		GivenPost = PostService.Posts.First(x => x.Id == PostId);
+		RecentPosts = PostService.Posts.Where(x => x.IsApprovedByAdmin).OrderByDescending(x => x.CreationDate).Take(5).ToList();
+		InitialColor();
+	}
+
+	private void InitialColor()
+	{
+		if (Logged.User is null)
+		{
+			Color = "#408780";
+		}
+		else
+		{
+			if (GivenPost.KudosBy is not null)
+			{
+				if (GivenPost.KudosBy.ToList().Contains(Logged.User.Username))
+				{
+					Color = "#FFCC48";
+				}
+				else
+				{
+					Color = "#FFCC48";
+				}
+			}
+			else
+			{
+				Color = "#006A7A";
+			}
+		}
+	}
+
+	public void Like()
+	{
+		if (Logged.User is not null)
+		{
+			if(GivenPost.KudosBy is not null)
+			{
+				if (GivenPost.KudosBy.ToList().Contains(Logged.User.Username))
+				{
+					AlertClass.RemoveAt(1);
+					AlertClass.Add("alert-info");
+					DisplayAlert = true;
+					AlertMessage = "Вече сте харесали този пост :)";
+				}
+				else
+				{
+					if (PostService.LeaveKudo(GivenPost))
+					{
+						AlertClass.RemoveAt(1);
+						AlertClass.Add("alert-success");
+						DisplayAlert = false;
+						AlertMessage = "Благодарим, че харесахте поста :)";
+						Color = "#FFCC48";
+					}
+					else
+					{
+						AlertClass.RemoveAt(1);
+						AlertClass.Add("alert-danger");
+						DisplayAlert = true;
+						AlertMessage = "Възникна грешка :/";
+					}
+				}
+			}
+			else
+			{
+				if (PostService.LeaveKudo(GivenPost))
+				{
+					AlertClass.RemoveAt(1);
+					AlertClass.Add("alert-success");
+					DisplayAlert = true;
+					AlertMessage = "Благодарим, че харесахте поста :)";
+					Color = "#FFCC48";
+				}
+				else
+				{
+					AlertClass.RemoveAt(1);
+					AlertClass.Add("alert-danger");
+					DisplayAlert = true;
+					AlertMessage = "Възникна грешка :/";
+				}
+			}
+		}
+		else
+		{
+			AlertClass.RemoveAt(1);
+			AlertClass.Add("alert-danger");
+			DisplayAlert = true;
+			AlertMessage = "Трябва да влезете в профила си, за да харесате поста";
+		}
+	}
+}

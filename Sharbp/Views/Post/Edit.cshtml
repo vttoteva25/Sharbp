@@ -1,0 +1,39 @@
+﻿@model Sharbp.ViewModel.EditPostViewModel
+
+@{ ViewData["Title"] = "EditPost"; }
+
+<div class="container" style="font-family: Bahnschrift; color: #006A7A; margin-bottom: 200px">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 style="padding-top: 50px; padding-bottom: 20px">Редактирай своята статия</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+			<form asp-action="Edit" asp-controller="Post" method="post" enctype="multipart/form-data">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group">
+					<label class="control-label">Заглавие</label>
+					<input asp-for="Title" class="form-control" />
+					<span asp-validation-for="Title" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label class="control-label">Съдържание</label>
+					<textarea asp-for="Content" class="form-control"/>@Model.Content</textarea>
+					<span asp-validation-for="Content" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="Image" class="control-label"></label>
+					<br>
+					<input asp-for="Image" />
+				</div>
+				<div class="form-group">
+					<input  style="background-color: #006A7A; color: #FFCC48" value="Редактирай" class="btn btn-darkinfo btn-block" />
+				</div>
+			</form>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,50 @@
+﻿@using Services;
+@using Models;
+
+<div class="container overflow-hidden">
+	<div class="row gy-3">
+		@foreach (Models.Post post in PostService.Posts.Where(x => x.IsApprovedByAdmin).OrderByDescending(x => x.UpdateDate).Take(pressMore * 9))
+		{
+			<CascadingValue Value="@post">
+				<Card></Card>
+			</CascadingValue>
+		}
+	</div>
+
+	@if (display)
+	{
+		<div class="row d-flex justify-content-center">
+			<button id="showMore" @onclick="ShowMore" class="btn btn-lg rounded-0">Покажи повече</button>
+		</div>
+	}
+</div>
+
+@code {
+	private int pressMore = 1;
+	private bool display = false;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		if(PostService.Posts.Where(x => x.IsApprovedByAdmin).Count() > 9)
+		{
+			display = true;
+		}
+	}
+
+	private void ShowMore()
+	{
+		pressMore++;
+
+		if (pressMore * 9 + 8 < PostService.Posts.Where(x => x.IsApprovedByAdmin).Count())
+		{
+			display = true;
+		}
+		else
+		{
+			display = false;
+		}
+
+	}
+}

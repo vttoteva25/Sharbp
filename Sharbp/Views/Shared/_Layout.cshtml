@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base href="~/" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+	<link href="toastr.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" />
+	<link rel="stylesheet" href="~/css/custom-style.css" />
+</head>
+<body>
+	<header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+			<div class="container ffb">
+				<a asp-controller="Home" asp-action="Index">
+					<img src="~/images/logo.png" style="height: 100px; width: 150px; margin-right: 25px" />
+				</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarText">
+					<div>
+						<ul class="navbar-nav ml-auto">
+							<li class="nav-item">
+								<a style="padding: 5px; text-decoration: none;" id="showMore" class="navbar-text nav resize" asp-controller="Home" asp-action="AboutUs">За нас</a>
+							</li>
+							<li class="nav-item">
+								<a style="padding: 5px; text-decoration: none;" id="showMore" class="navbar-text nav resize" asp-controller="Home" asp-action="ContactUs">Контакти</a>
+							</li>
+							<li class="nav-item">
+								<a style="padding: 5px; text-decoration: none;" id="showMore" class="navbar-text nav resize" asp-controller="Post" asp-action="Create">Споделете</a>
+							</li>
+							@if (Logged.User is null)
+							{
+								<li class="nav-item toside">
+									<a style="padding: 5px; text-decoration: none;" id="showMore" class="navbar-text nav resize" asp-controller="User" asp-action="Login">Вход</a>
+								</li>
+								<li class="nav-item">
+									<a style="padding: 5px; text-decoration: none;" id="showMore" class="navbar-text nav resize" asp-controller="User" asp-action="Register">Регистрация</a>
+								</li>
+							}
+							else
+							{
+								if (Logged.User.Username == "Admin")
+								{
+									<li class="nav-item toside">
+										<a style="padding: 5px; text-decoration: none;" id="showMore" class="navbar-text nav resize" asp-controller="Admin" asp-action="Index">
+											Здравейте, администратор
+										</a>
+									</li>
+								}
+								else
+								{
+									<li class="nav-item toside">
+										<a style="padding: 5px; text-decoration: none;" id="showMore" class="navbar-text nav resize" asp-controller="User" asp-action="Profile" asp-route-id="@Logged.User.Username">
+											Здравейте, @Logged.User.FirstName @Logged.User.LastName
+										</a>
+									</li>
+								}
+							}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
+
+	<footer class="border-top footer" style=" background-color: #006A7A; ">
+		<div class="container">
+			<div class="row">
+				<div class="col-6" style="font-family: Bahnschrift">
+					<br />
+					&copy; 2022 - Sharbp
+				</div>
+				<div class="col-3" style="color: lightgrey;">
+					<p class="p-footer">Development:</p>
+					<p class="p-footer">angelmomov03@pmgkk.com</p>
+					<p class="p-footer">valeriyastamenova03@pmgkk.com</p>
+					<p class="p-footer">viktoriyastoteva03@pmgkk.com</p>
+				</div>
+				<div class="col-3" style="color: lightgrey;">
+					<p class="p-footer">Design concept:</p>
+					<p class="p-footer">annakukova03@pmgkk.com</p>
+					<hr />
+					<div class="higher">
+						<p class="p-footer">Logo:</p>
+						<p class="p-footer">anastasiageorgieva03@pmgkk.com</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<script src="toastr.js"></script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"></script>
+	<script src="~/_framework/blazor.server.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

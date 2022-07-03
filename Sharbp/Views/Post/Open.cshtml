@@ -1,0 +1,3 @@
+﻿@model dynamic
+
+@(await Html.RenderComponentAsync<Sharbp.Components.Post>(RenderMode.Server, new { PostId = Model.PostId, PostedBy = Model.User }))

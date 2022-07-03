@@ -1,0 +1,35 @@
+﻿<div class="col-lg-4 d-flex justify-content-center" style="padding-bottom: 20px;">
+	<a href="Post/@Post.Id" class="btn">
+		<div class="card" style="width: 18rem; height: 19rem;">
+			<img style="height: 11rem;" class="card-img-top" src="@Post.ImageUrl" alt="Card image cap">
+			<div class="card-body">
+				<h5 class="card-title text-center normal-heading link">@ShortTitle()</h5>
+				<hr style="height: 2px; border-color: #006A7A;" />
+				<p class="card-text normal-text">Качено от @GetUsername()</p>
+			</div>
+		</div>
+	</a>
+</div>
+
+@code {
+	[CascadingParameter]
+	public Models.Post Post { get; set; }
+
+	public string GetUsername()
+	{
+		List<Models.User> usersWithPosts = UserService.Users.Where(x => x.PostsId is not null).ToList();
+		return usersWithPosts.First(x => x.PostsId.Contains(Post.Id)).Username;
+	}
+
+	public string ShortTitle()
+	{
+		if(Post.Title.Length > 30)
+		{
+			return Post.Title.Substring(0, 26) + "...";
+		}
+		else
+		{
+			return Post.Title;
+		}
+	}
+}

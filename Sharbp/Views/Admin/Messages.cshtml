@@ -1,0 +1,61 @@
+﻿@using Sharbp.Services;
+@using Models;
+@inject JsonFileMessageService MessageService
+
+<body class="custom"  style="margin-bottom: 200px">
+	<div class="row py-5 px-4">
+		<div class="col-md-10 mx-auto">
+			<div class="bg-white shadow rounded overflow-hidden">
+				<div class="px-4 pt-0 pb-4 cover">
+					<div class="media align-items-end profile-head">
+						<div class="profile mr-3"><img src="/images/profilePicture.svg" alt="..." width="130" class="rounded-circle mb-2 img-thumbnail"></div>
+						<div class="media-body mb-5 normal-text">
+							<h3 class="mt-0 mb-1"><span style="background-color: white; padding: 5px;">@Logged.User.FirstName @Logged.User.LastName</span></h3>
+						</div>
+					</div>
+				</div>
+				<div class="px-4 py-5" style="margin-top: 20px;">
+					<div class="d-flex align-items-center justify-content-between mb-3">
+						<h5 class="mb-0" style="text-indent: 10px;">Съобщения</h5>
+					</div>
+					@if (MessageService.Messages.Count != 0)
+					{
+						@foreach (Message message in MessageService.Messages.OrderBy(x => x.IsRead).ThenBy(x => x.CreationDate))
+						{
+							if (!message.IsRead)
+							{
+								<div class="p-4 my-2 rounded shadow-sm bg-light">
+									<a class="mb-0 recent-link custom-text" asp-controller="Admin" asp-action="Message" asp-route-id="@message.Id">@message.Title</a>
+									<a asp-controller="Admin" asp-action="Delete" asp-route-id="@message.Id">
+										<svg xmlns="http://www.w3.org/2000/svg" fill="#006A7A" class="bi bi-backspace-fill float-right edit-delete" viewBox="0 0 16 16">
+											<path d="M15.683 3a2 2 0 0 0-2-2h-7.08a2 2 0 0 0-1.519.698L.241 7.35a1 1 0 0 0 0 1.302l4.843 5.65A2 2 0 0 0 6.603 15h7.08a2 2 0 0 0 2-2V3zM5.829 5.854a.5.5 0 1 1 .707-.708l2.147 2.147 2.146-2.147a.5.5 0 1 1 .707.708L9.39 8l2.146 2.146a.5.5 0 0 1-.707.708L8.683 8.707l-2.147 2.147a.5.5 0 0 1-.707-.708L7.976 8 5.829 5.854z" />
+										</svg>
+									</a>
+								</div>
+							}
+							else
+							{
+								<div class="p-4 my-2 rounded shadow-sm bg-light">
+									<a class="mb-0 seen-link custom-text" asp-controller="Admin" asp-action="Message" asp-route-id="@message.Id">@message.Title</a>
+									<a asp-controller="Admin" asp-action="Delete" asp-route-id="@message.Id">
+										<svg xmlns="http://www.w3.org/2000/svg" fill="#006A7A" class="bi bi-backspace-fill float-right edit-delete" viewBox="0 0 16 16">
+											<path d="M15.683 3a2 2 0 0 0-2-2h-7.08a2 2 0 0 0-1.519.698L.241 7.35a1 1 0 0 0 0 1.302l4.843 5.65A2 2 0 0 0 6.603 15h7.08a2 2 0 0 0 2-2V3zM5.829 5.854a.5.5 0 1 1 .707-.708l2.147 2.147 2.146-2.147a.5.5 0 1 1 .707.708L9.39 8l2.146 2.146a.5.5 0 0 1-.707.708L8.683 8.707l-2.147 2.147a.5.5 0 0 1-.707-.708L7.976 8 5.829 5.854z" />
+										</svg>
+									</a>
+								</div>
+							}
+						}
+					}
+					else
+					{
+						<div class="px-4">
+							<div class="p-4 rounded shadow-sm bg-light">
+								<p class="normal-text mb-0">Няма съобщения</p>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
